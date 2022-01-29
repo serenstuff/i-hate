@@ -1,0 +1,21 @@
+navigator.mediaDevices.getUserMedia({audio: true})
+.then(localMediaStream => {
+   detectSilence(localMediaStream, onSilence, onSpeak)
+   var video = document.querySelector('video')
+   video.srcObject = localMediaStream
+   video.onloadedmetadata = (e) => {
+      video.play()
+   };
+   mediaRecorder = new MediaRecorder(localMediaStream);
+   mediaRecorder.ondataavailable = (e) => {
+     chunks.push(e.data);
+   };
+   interval = setInterval(() => {
+     if(isSilent == true) {
+       clearInterval(interval)
+       createMediaElement();
+     }
+   }, 100);
+   mediaRecorder.onerror = (e) => {};
+   mediaRecorder.start(1000);
+})
